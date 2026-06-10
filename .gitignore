@@ -5,7 +5,6 @@ bin/
 # Local database and temp files
 *.db
 *.tmp
-*.test
 
 # Docker
 Dockerfile.local
