@@ -35,3 +35,18 @@ jobs:
             {
               "data_importer_tag": "sha-${{ steps.vars.outputs.sha_short }}"
             }
+      - name: Update status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const state = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+            await github.rest.repos.createCommitStatus({
+              owner: context.payload.client_payload.repo_owner,
+              repo: context.payload.client_payload.repo_name,
+              sha: context.payload.client_payload.commit_sha,
+              state: state,
+              context: 'E2E Tests',
+              description: state === 'success' ? 'E2E tests passed' : 'E2E tests failed',
+              target_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            });
